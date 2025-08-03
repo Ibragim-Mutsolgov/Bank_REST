@@ -5,6 +5,10 @@ hibernate:
     password: pass
     url: jdbc:postgresql://localhost:5432/postgres
 
+jwt:
+  security:
+    value: 9C6E7DE4B5A4D9245D6766BB3B17F
+
 spring:
   jpa:
     open-in-view: false

@@ -1,9 +1,27 @@
-# 
-# docker-compose.yml — определяет сервисы для разработки и тестирования.
-
-Что нужно сделать:
-  - Настроить сервисы для:
-      - PostgreSQL (или MySQL) с начальной базой.
-      - Приложения Spring Boot (если нужно).
-  - Открыть нужные порты (например, 5432, 8080).
-  - Настроить volume для хранения данных БД.
+services:
+  postgres:
+    image: 'postgres:17.0'
+    environment:
+      - 'POSTGRES_USER=postgres'
+      - 'POSTGRES_PASSWORD=pass'
+      - 'POSTGRES_DB=postgres'
+    ports:
+      - '5432'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+     - db-data:/var/lib/postgresql/data
+  search:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.22
+    environment:
+      discovery.type: singel-node
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/_cluster/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
